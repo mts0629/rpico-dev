@@ -1,0 +1,21 @@
+{
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": "."
+    },
+    "name": "rpico-dev",
+    "containerEnv": {
+        "TZ": "Asia/Tokyo"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "raspberry-pi.raspberry-pi-pico",
+                "marus25.cortex-debug",
+                "ms-vscode.cpptools",
+                "ms-vscode.cpptools-themes",
+                "ms-vscode.vscode-serial-monitor"
+            ]
+        }
+    }
+}
