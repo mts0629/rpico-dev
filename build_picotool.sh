@@ -1,10 +1,13 @@
 #!/bin/bash -e
 
-git clone https://github.com/raspberrypi/pico-sdk.git --branch master
+if [ ! -d pico-sdk ]; then
+    git clone https://github.com/raspberrypi/pico-sdk.git --branch master
+fi
 
 pushd pico-sdk
-cmake -S . -B ./build
+rm -rf ./build
+cmake -S ./ -B ./build
 cmake --build ./build --target picotoolBuild
 popd
 
-cp pico-sdk/build/_deps/picotool-build/picotool .
+cp pico-sdk/build/_deps/picotool-build/picotool tools

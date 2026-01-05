@@ -4,7 +4,8 @@ FROM node:latest
 RUN apt-get update && apt install -y \
     sudo \
     git \
-    vim && \
+    vim \
+    cmake && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
