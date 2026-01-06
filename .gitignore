@@ -1,6 +1,7 @@
 *.o
 *.elf
 *.bin
+*.uf2
 pico-sdk/
 tools/*
 !tools/.gitkeep
