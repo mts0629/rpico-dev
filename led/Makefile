@@ -1,8 +1,20 @@
 PREFIX = arm-none-eabi-
 
-led.uf2: start.o
+.PHONY: clean
+
+led.uf2: led.elf
+	../tools/picotool uf2 convert $^ -t elf $@ -t uf2
+
+led.elf: start.o led.o
 	$(PREFIX)ld -nostdlib -T memmap.ld $^ -o led.elf
-	../tools/picotool uf2 convert led.elf -t elf $@ -t uf2
 
 %.o: %.S
-	$(PREFIX)as -mcpu=cortex-m0plus -mthumb -c $< -o $@
+	$(PREFIX)as -mcpu=cortex-m0 -mthumb -c $< -o $@
+
+%.o: %.c
+	$(PREFIX)gcc -mcpu=cortex-m0 -ffreestanding -nostartfiles -mthumb -c $< -o $@
+
+clean:
+	@rm *.o
+	@rm *.elf
+	@rm *.uf2

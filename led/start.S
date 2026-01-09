@@ -1,11 +1,8 @@
-.cpu cortex-m0
+.cpu cortex-m0plus
 .thumb
 
 reset:
-    ldr r0, =0x20000001
+    ldr r0, =0x20000100
     mov sp, r0
-    bl main
-    b .
-
-main:
+    bl led
     b .
