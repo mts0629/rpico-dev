@@ -1,7 +1,13 @@
 {
     "build": {
         "dockerfile": "./Dockerfile",
-        "context": "."
+        "context": ".",
+        "args": {
+            // Default user
+            "USERNAME": "developer",
+            "USER_UID": "1000",
+            "USER_GID": "1000"
+        }
     },
     "name": "rpico-dev",
     "containerEnv": {
@@ -9,6 +15,14 @@
     },
     "customizations": {
         "vscode": {
+            "settings": {
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    }
+                },
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
             "extensions": [
                 "marus25.cortex-debug",
                 "ms-vscode.cpptools",
@@ -16,5 +30,9 @@
                 "ms-vscode.vscode-serial-monitor"
             ]
         }
-    }
+    },
+    "mounts": [
+        // Debug probe
+        // { "source":  "/dev/ttyACM0", "target": "/dev/ttyACM0", "type": "bind" }
+    ]
 }
