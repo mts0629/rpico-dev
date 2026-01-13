@@ -4,7 +4,7 @@ MCPU = -mcpu=cortex-m0plus
 .PHONY: clean
 
 min_image.uf2: min_image.elf
-	../tools/picotool uf2 convert $< -t elf $@ -t uf2
+	picotool uf2 convert $< -t elf $@ -t uf2
 
 min_image.elf: image_def.o
 	$(PREFIX)ld -nostdlib -T memmap.ld $< -o $@

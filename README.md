@@ -1,3 +1,3 @@
 # rpico-dev
 
-Development with Raspberry Pi Pico
+Development with Raspberry Pi Pico 2
