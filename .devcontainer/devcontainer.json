@@ -34,9 +34,5 @@
                 "ms-vscode.vscode-serial-monitor"
             ]
         }
-    },
-    "mounts": [
-        // Debug probe
-        // { "source":  "/dev/ttyACM0", "target": "/dev/ttyACM0", "type": "bind" }
-    ]
+    }
 }
