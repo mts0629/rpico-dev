@@ -6,7 +6,7 @@ MCPU = -mcpu=cortex-m0plus
 min_image.uf2: min_image.elf
 	picotool uf2 convert $< -t elf $@ -t uf2
 
-min_image.elf: image_def.o start.o
+min_image.elf: image_def.o start.o main.o
 	$(PREFIX)ld -nostdlib -T memmap.ld $^ -o $@
 
 %.o: %.S

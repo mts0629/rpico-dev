@@ -26,16 +26,9 @@ vectors:
     .thumb_func
     .global reset
 reset:
-    ldr r0, =0x20001000
-    mov sp, r0
     bl main
     b .
 
     .thumb_func
 halt:
-    b .
-
-    .thumb_func
-    .global main
-main:
     b .
