@@ -1,5 +1,4 @@
     .cpu cortex-m0plus
-    /*.syntax unified*/
     .thumb
 
     .section .text
