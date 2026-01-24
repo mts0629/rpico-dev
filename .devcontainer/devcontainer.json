@@ -14,7 +14,7 @@
         "TZ": "Asia/Tokyo"
     },
     "remoteEnv": {
-        "PATH": "/workspaces/rpico-dev/pico-sdk-tools/build/openocd-install/usr/local/bin:/workspaces/rpico-dev/pico-sdk-tools/build/picotool-install/picotool:${containerEnv:PATH}"
+        "PATH": "/usr/local/pioasm:/usr/local/picotool:${containerEnv:PATH}"
     },
     "postCreateCommand": ".devcontainer/setup.sh",
     "customizations": {

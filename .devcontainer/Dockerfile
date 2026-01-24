@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     gcc-arm-none-eabi \
     gdb-arm-none-eabi \
+    libusb-1.0.0-dev \
+    libhidapi-dev \
+    libftdi1-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

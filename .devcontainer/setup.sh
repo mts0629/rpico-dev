@@ -5,5 +5,12 @@ if [ ! -d pico-sdk-tools ]; then
 fi
 
 pushd pico-sdk-tools
-SKIP_RISCV=1 bash build_linux.sh
+if [ ! -e ./build/openocd-install/usr/local/bin/openocd ] || \
+   [ ! -e ./build/pico-sdk-tools/pioasm/pioasm ] || \
+   [ ! -e ./build/picotool-install/picotool/picotool ] ; then
+    SKIP_RISCV=1 bash build_linux.sh
+fi
+sudo cp -r build/openocd-install/usr/local/* /usr/local/
+sudo cp -r build/pico-sdk-tools/pioasm /usr/local/
+sudo cp -r build/picotool-install/picotool /usr/local/
 popd
