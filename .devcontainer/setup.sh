@@ -13,5 +13,4 @@ fi
 sudo cp -r build/openocd-install/usr/local/* /usr/local/
 sudo cp -r build/pico-sdk-tools/pioasm /usr/local/
 sudo cp -r build/picotool-install/picotool /usr/local/
-sudo cp build/picotool/udev/60-picotool.rules /usr/lib/udev/rules.d/
 popd

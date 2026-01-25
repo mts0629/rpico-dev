@@ -10,6 +10,14 @@
         }
     },
     "name": "rpico-dev",
+    "runArgs": [
+        // Allow read, mknod, write for character device major number 189 (USB)
+        "--device-cgroup-rule", "c 189:* rmw"
+    ],
+    "mounts": [
+        // Attach USB
+        { "source": "/dev/bus/usb", "target": "/dev/bus/usb", "type": "bind" }
+    ],
     "containerEnv": {
         "TZ": "Asia/Tokyo"
     },
