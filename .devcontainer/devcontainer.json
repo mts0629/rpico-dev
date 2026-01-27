@@ -16,7 +16,7 @@
     ],
     "mounts": [
         // Attach USB
-        { "source": "/dev/bus/usb", "target": "/dev/bus/usb", "type": "bind" }
+        { "source": "/dev", "target": "/dev", "type": "bind" }
     ],
     "containerEnv": {
         "TZ": "Asia/Tokyo"
