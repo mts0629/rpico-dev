@@ -3,10 +3,10 @@ MCPU = -mcpu=cortex-m0plus
 
 .PHONY: clean
 
-min_image.uf2: min_image.elf
+led.uf2: led.elf
 	picotool uf2 convert $< -t elf $@ -t uf2
 
-min_image.elf: image_def.o start.o main.o
+led.elf: image_def.o start.o main.o
 	$(PREFIX)ld -nostdlib -T memmap.ld $^ -o $@
 
 %.o: %.S
