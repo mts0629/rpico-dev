@@ -1,5 +1,11 @@
 PREFIX = arm-none-eabi-
 MCPU = -mcpu=cortex-m0plus
+ASFLAGS = -mthumb
+
+BUILD ?= release
+ifeq ($(BUILD), debug)
+	ASFLAGS += -g
+endif
 
 .PHONY: clean
 
@@ -10,7 +16,7 @@ led.elf: image_def.o start.o main.o
 	$(PREFIX)ld -nostdlib -T memmap.ld $^ -o $@
 
 %.o: %.S
-	$(PREFIX)as $(MCPU) -mthumb -c $< -o $@
+	$(PREFIX)as $(MCPU) $(ASFLAGS) -c $< -o $@
 
 clean:
 	@rm *.o
