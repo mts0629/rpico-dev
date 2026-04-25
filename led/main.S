@@ -16,15 +16,45 @@
     .equ GPIO_OUT_SET, (SIO_BASE + 0x18)
     .equ GPIO_OE_SET, (SIO_BASE + 0x38)
 
+    /* Addresses */
+    .equ STACK_TOP, 0x20001000
+
+    .section .vectors, "a"
+    .align 2
+    .global vectors
+vectors:
+    /* Vector table */
+    .word STACK_TOP         /* Initial stack top */
+    .word reset_handler     /* Reset handler */
+    .word default_handler   /* NMI handler */
+    .word default_handler   /* Hard fault handler */
+    .word default_handler   /* Mem manage handler */
+    .word default_handler   /* Bus fault handler */
+    .word default_handler   /* Usage fault handler */
+    .word 0x0
+    .word 0x0
+    .word 0x0
+    .word 0x0
+    .word default_handler   /* SVCall handler */
+    .word default_handler   /* DebugMon handler */
+    .word 0x0
+    .word default_handler   /* PendSV handler */
+    .word default_handler   /* SysTick handler */
+
     .section .text
+    .thumb_func
+    .global reset_handler
+reset_handler:
+    b main
+
     .thumb_func
     .global main
 main:
-    /* Release I/O from reset */
+    /* Deassert reset of GPIO */
     ldr r0, =RESETS_RESET
     ldr r1, [r0]
     ldr r2, =((1 << 9) | (1 << 6))
-    bic r1, r1, r2                  /* PADS_BANK0=IO_BANK0=0 */
+    bic r1, r1, r2                  /* PADS_BANK0 = 0, IO_BANK0 = 0 */
     str r1, [r0]
     ldr r0, =RESETS_DONE
 wait_reset_done:
@@ -33,11 +63,11 @@ wait_reset_done:
     cmp r1, r2
     bne wait_reset_done
 
-    /* Set a pad */
+    /* Disable a pad isolation latch */
     ldr r0, =GPIO25
     ldr r1, [r0]
     ldr r2, =(1 << 8)
-    bic r1, r1, r2                  /* ISO=0 */
+    bic r1, r1, r2                  /* ISO = 0 */
     str r1, [r0]
 
     /* Set SIO (Software I/O) */
@@ -45,7 +75,7 @@ wait_reset_done:
     mov r1, #5
     str r1, [r0]                    /* FUNCSEL: SIO_25 */
 
-    /* Enable output of GPIO25 */
+    /* Enable output */
     ldr r0, =GPIO_OE_SET
     ldr r1, =(1 << 25)
     str r1, [r0]                    /* GPIO25=1 */
@@ -55,4 +85,8 @@ wait_reset_done:
     ldr r1, =(1 << 25)
     str r1, [r0]                    /* GPIO25=1 */
 
+    b .
+
+    .thumb_func
+default_handler:
     b .

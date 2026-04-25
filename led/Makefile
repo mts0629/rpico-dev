@@ -1,5 +1,5 @@
 PREFIX = arm-none-eabi-
-MCPU = -mcpu=cortex-m0plus
+MCPU = -mcpu=cortex-m33
 ASFLAGS = -mthumb
 
 BUILD ?= release
@@ -9,10 +9,7 @@ endif
 
 .PHONY: clean
 
-led.uf2: led.elf
-	picotool uf2 convert $< -t elf $@ -t uf2
-
-led.elf: image_def.o start.o main.o
+led.elf: image_def.o main.o
 	$(PREFIX)ld -nostdlib -T memmap.ld $^ -o $@
 
 %.o: %.S
@@ -21,4 +18,3 @@ led.elf: image_def.o start.o main.o
 clean:
 	@rm *.o
 	@rm *.elf
-	@rm *.uf2
