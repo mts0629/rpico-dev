@@ -33,6 +33,7 @@
     .equ SYST_CSR, (PPB_BASE + 0xe010)
     .equ SYST_RVR, (PPB_BASE + 0xe014)
     .equ SYST_CVR, (PPB_BASE + 0xe018)
+    .equ VTOR, (PPB_BASE + 0xed08)
 
     /* Addresses */
     .equ STACK_TOP, 0x20001000
@@ -63,6 +64,22 @@ vectors:
     .thumb_func
     .global reset_handler
 reset_handler:
+    /* Diable IRQ */
+    cpsid i
+
+    /* Set main stack pointer (MSP) */
+    ldr r0, =STACK_TOP
+    mov sp, r0
+
+    /* Set vector table */
+    ldr r0, =VTOR
+    ldr r1, =vectors
+    str r1, [r0]
+
+    /* Sync */
+    dsb /* Data sync barrier */
+    isb /* Instruction sync barrier */
+
     b main
 
     .thumb_func
@@ -82,7 +99,8 @@ systick_handler:
 main:
     /* Use an external oscillator (XOSC) */
     ldr r0, =XOSC_CTRL
-    ldr r1, =0xaa0          /* FREQ_RANGE: 1_15MHZ
+    ldr r1, =0xfabaa0       /* Enable XOSC,
+                               FREQ_RANGE: 1_15MHZ
                                (12 MHz crystal is used) */
     str r1, [r0]
     ldr r0, =XOSC_STARTUP
@@ -92,30 +110,32 @@ main:
     str r1, [r0]
     ldr r0, =XOSC_STATUS
     ldr r2, =0x80000000     /* b31: STABLE */
-wait_xosc_stable:           /* Wait stable */
+wait_xosc_stable:           /* Wait to be stable */
     ldr r1, [r0]
     tst r1, r2
-    bne wait_xosc_stable
+    beq wait_xosc_stable
 
     /* Set source of reference clock */
     ldr r0, =CLK_REF_CTRL
-    ldr r2, =0x2                /* Source of reference clock: XOSC_CLKSRC */
+    mov r2, #2                  /* Source of reference clock: XOSC_CLKSRC */
     str r2, [r0]
     ldr r0, =CLK_REF_SELECTED
-wait_clk_ref_stable:            /* Wait stable */
+    mov r2, #(1 << 2)           /* b3:0: XOSC_CLKSRC */
+wait_clk_ref_selected:          /* Wait to be selected */
     ldr r1, [r0]
     tst r1, r2
-    bne wait_clk_ref_stable
+    beq wait_clk_ref_selected
 
     /* Set source of system clock */
     ldr r0, =CLK_SYS_CTRL
-    ldr r2, =0x0                /* Source of system clock: CLK_REF */
+    mov r2, #0                  /* Source of system clock: CLK_REF */
     str r2, [r0]
     ldr r0, =CLK_SYS_SELECTED
-wait_clk_sys_stable:            /* Wait stable */
+    mov r2, #1                  /* b1:0: CLK_REF */
+wait_clk_sys_selected:          /* Wait to be selected */
     ldr r1, [r0]
     tst r1, r2
-    bne wait_clk_sys_stable
+    beq wait_clk_sys_selected
 
     /* Deassert reset of GPIO */
     ldr r0, =RESETS_RESET
@@ -125,9 +145,9 @@ wait_clk_sys_stable:            /* Wait stable */
     str r1, [r0]
     ldr r0, =RESETS_DONE
 wait_reset_done:
-    ldr r1, [r0]                    /* Wait stable */
+    ldr r1, [r0]                   /* Wait to be stable */
     tst r1, r2
-    bne wait_reset_done
+    beq wait_reset_done
 
     /* Disable a pad isolation latch */
     ldr r0, =GPIO25
@@ -159,6 +179,9 @@ wait_reset_done:
     ldr r0, =SYST_CVR 
     mov r1, #0              /* Reset current counter value */
     str r1, [r0]
+
+    /* Enable IRQ */
+    cpsie i
 
 loop:
     b loop
