@@ -16,6 +16,9 @@
     .equ GPIO_OUT_SET, (SIO_BASE + 0x18)
     .equ GPIO_OE_SET, (SIO_BASE + 0x38)
 
+    .equ PPB_BASE, 0xe0000000
+    .equ VTOR, (PPB_BASE + 0xed08)
+
     /* Addresses */
     .equ STACK_TOP, 0x20001000
 
@@ -45,6 +48,19 @@ vectors:
     .thumb_func
     .global reset_handler
 reset_handler:
+    /* Set main stack pointer (MSP) */
+    ldr r0, =STACK_TOP
+    mov sp, r0
+
+    /* Set vector table */
+    ldr r0, =VTOR
+    ldr r1, =vectors
+    str r1, [r0]
+
+    /* Sync */
+    dsb /* Data sync barrier */
+    isb /* Instruction sync barrier */
+
     b main
 
     .thumb_func
