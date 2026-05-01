@@ -27,30 +27,26 @@
     .global vectors
 vectors:
     /* Vector table */
-    .word STACK_TOP         /* Initial stack top */
-    .word reset_handler     /* Reset handler */
-    .word default_handler   /* NMI handler */
-    .word default_handler   /* Hard fault handler */
-    .word default_handler   /* Mem manage handler */
-    .word default_handler   /* Bus fault handler */
-    .word default_handler   /* Usage fault handler */
+    .word STACK_TOP /* Initial stack top */
+    .word reset     /* Reset handler */
+    .word halt      /* NMI handler */
+    .word halt      /* Hard fault handler */
+    .word halt      /* Mem manage handler */
+    .word halt      /* Bus fault handler */
+    .word halt      /* Usage fault handler */
     .word 0x0
     .word 0x0
     .word 0x0
     .word 0x0
-    .word default_handler   /* SVCall handler */
-    .word default_handler   /* DebugMon handler */
+    .word halt      /* SVCall handler */
+    .word halt      /* DebugMon handler */
     .word 0x0
-    .word default_handler   /* PendSV handler */
+    .word halt      /* PendSV handler */
 
     .section .text
     .thumb_func
-default_handler:
-    b .
-
-    .thumb_func
-    .global reset_handler
-reset_handler:
+    .global reset
+reset:
     /* Set main stack pointer (MSP) */
     ldr r0, =STACK_TOP
     mov sp, r0
