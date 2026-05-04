@@ -32,7 +32,7 @@ SUBSYSTEM=="usb", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="000f", \
     MODE="0666"
 
 # Update configuration
-$ sudo udevadm conrol --reload
+$ sudo udevadm control --reload
 $ sudo udevadm trigger
 ```
 
@@ -70,6 +70,9 @@ $ cat /etc/wsl.conf
 [boot]
 systemd=true
 ```
+
+And then add the udev rules mentioned above on WSL2 host side 
+(udev doesn't work in Dev Container).
 
 ### References
 
