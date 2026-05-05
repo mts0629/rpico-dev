@@ -104,21 +104,16 @@ main:
     ldr r0, =CLK_SYS_CTRL
     ldr r1, [r0]
     mov r2, #1
-    bic r1, r1, r2              /* SRC: CLK_REF,
-                                   don't change AUXSRC at the same time */
+    and r1, r1, r2                 /* SRC: CLKSRC_CLK_SYS_AUX */
+    mov r2, #(3 << 5)
+    orr r1, r1, r2                 /* AUXSRC: XOSC_CLKSRC */
     str r1, [r0]
     ldr r0, =CLK_SYS_SELECTED
-    mov r1, #1                  /* CLK_REF */
+    mov r1, #(1 << 1)              /* CLKSRC_CLK_SYS_AUX */
     bl poll
     ldr r0, =CLK_SYS_DIV
-    ldr r1, =(1 << 16)          /* INT=1, FRAC=0: no division */
+    ldr r1, =(1 << 16)             /* INT=1, FRAC=0: no division */
     str r1, [r0]
-
-    /* Wait to be stable */
-    mov r2, #200
-1:
-    sub r2, r2, #1
-    bne 1b
 
     /* Deassert reset of GPIO */
     ldr r0, =RESETS_RESET
