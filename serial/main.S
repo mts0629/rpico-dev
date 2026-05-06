@@ -61,11 +61,11 @@ systick:
     ldr r2, =(1 << 5)   /* TXFF */
 1:
     str r1, [r0]
-    tst r1, r2          /* Check transmit FIFO */
+    tst r1, r2          /* Check transmit FIFO is empty */
     bne 1b
 
     ldr r0, =UART0_UARTDR
-    mov r1, #'A'        /* Send data */
+    mov r1, #'Y'        /* Send data */
     str r1, [r0]
 
     bx lr
@@ -79,9 +79,9 @@ poll:
     beq 1b
     bx lr
 
-    /* Clock configuration */
     .thumb_func
-configure_clock:
+    .global main
+main:
     /* Reset to the default configuration (ROSC) */
     ldr r0, =CLK_REF_CTRL
     mov r1, #0                  /* SRC: ROSC_CLKSRC_PH */
@@ -125,46 +125,16 @@ configure_clock:
     ldr r0, =CLK_SYS_CTRL
     ldr r1, [r0]
     mov r2, #1
-    bic r1, r1, r2              /* SRC: CLK_REF,
-                                   don't change AUXSRC at the same time */
+    and r1, r1, r2                 /* SRC: CLKSRC_CLK_SYS_AUX */
+    mov r2, #(3 << 5)
+    orr r1, r1, r2                 /* AUXSRC: XOSC_CLKSRC */
     str r1, [r0]
     ldr r0, =CLK_SYS_SELECTED
-    mov r1, #1                  /* CLK_REF */
+    mov r1, #(1 << 1)              /* CLKSRC_CLK_SYS_AUX */
     bl poll
     ldr r0, =CLK_SYS_DIV
-    ldr r1, =(1 << 16)          /* INT=1, FRAC=0: no division */
+    ldr r1, =(1 << 16)             /* INT=1, FRAC=0: no division */
     str r1, [r0]
-
-    /* Wait to be stable */
-    mov r2, #200
-1:
-    sub r2, r2, #1
-    bne 1b
-
-    bx lr
-
-    /* SysTick configuration */
-    .thumb_func
-configure_systick:
-    ldr r0, =SYST_CSR
-    mov r1, #7              /* CLKSOURCE: processor clock,
-                               TICKINT: assert the SysTick expecption request,
-                               ENABLE: counter enabled */
-    str r1, [r0]
-    ldr r0, =SYST_RVR
-    ldr r1, =12000000       /* RELOAD: 12000000,
-                               interrupt every 12,000,000 clock cycles
-                               (= 1 sec) */
-    str r1, [r0]
-    ldr r0, =SYST_CVR 
-    mov r1, #0              /* Reset the current value of the SysTick counter */
-    str r1, [r0]
-    bx lr
-
-    .thumb_func
-    .global main
-main:
-    bl configure_clock
 
     /* Enable peripheral clock */
     ldr r0, =CLK_PERI_CTRL
@@ -172,12 +142,8 @@ main:
     ldr r2, =(1 << 11)  /* ENABLE, AUXSRC: CLK_SYS */
     orr r1, r1, r2
     str r1, [r0]
-    ldr r2, =(1 << 28)
-    orr r1, r1, r2
-1:
-    ldr r1, [r0]        /* Wait to be enabled */
-    cmp r1, r2
-    bne 1b
+    ldr r1, =(1 << 28)  /* ENABLED */
+    bl poll
 
     /* Deassert reset */
     ldr r0, =RESETS_RESET
@@ -215,7 +181,20 @@ main:
     ldr r1, =(1 << 25)
     str r1, [r0]
 
-    bl configure_systick
+    // bl configure_systick
+    ldr r0, =SYST_CSR
+    mov r1, #7              /* CLKSOURCE: processor clock,
+                               TICKINT: assert the SysTick expecption request,
+                               ENABLE: counter enabled */
+    str r1, [r0]
+    ldr r0, =SYST_RVR
+    ldr r1, =12000000       /* RELOAD: 12000000,
+                               interrupt every 12,000,000 clock cycles
+                               (= 1 sec) */
+    str r1, [r0]
+    ldr r0, =SYST_CVR 
+    mov r1, #0              /* Reset the current value of the SysTick counter */
+    str r1, [r0]
 
     /* Disable UART */
     ldr r0, =UART0_UARTCR
