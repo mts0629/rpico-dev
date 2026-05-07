@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     git \
     vim \
     cmake \
+    udev \
     usbutils \
     build-essential \
     gcc-arm-none-eabi \
