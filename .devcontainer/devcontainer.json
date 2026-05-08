@@ -24,7 +24,6 @@
     "remoteEnv": {
         "PATH": "/usr/local/pioasm:/usr/local/picotool:${containerEnv:PATH}"
     },
-    "postCreateCommand": ".devcontainer/setup.sh",
     "customizations": {
         "vscode": {
             "settings": {
