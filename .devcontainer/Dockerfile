@@ -55,4 +55,7 @@ COPY --from=builder \
     /usr/local/bin/
 COPY --from=builder /pico-sdk-tools/build/openocd-install/usr/local/share/ /usr/local/share/
 
+# Enable serial connection via tty
+RUN usermod -aG dialout $USERNAME
+
 USER $USERNAME

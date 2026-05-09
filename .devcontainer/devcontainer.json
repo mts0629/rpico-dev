@@ -11,8 +11,9 @@
     },
     "name": "rpico-dev",
     "runArgs": [
-        // Allow read, mknod, write for character device major number 189 (USB)
-        "--device-cgroup-rule", "c 189:* rmw"
+        // Allow read, mknod, write for character device major number 189 (USB) and 166 (ttyACM)
+        "--device-cgroup-rule", "c 189:* rmw",
+        "--device-cgroup-rule", "c 166:* rmw"
     ],
     "mounts": [
         // Attach USB
