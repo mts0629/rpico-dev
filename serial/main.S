@@ -210,6 +210,7 @@ main:
     str r1, [r0]
     ldr r0, =UART0_UARTLCR_H
     ldr r1, =(3 << 5) | (1 << 4)    /* WLEN: 8, FEN: 1, PEN: 0 */
+    str r1, [r0]
 
     /* Enable UART */
     ldr r0, =UART0_UARTCR
