@@ -46,6 +46,10 @@
     .equ SYST_RVR, (PPB_BASE + 0xe014)
     .equ SYST_CVR, (PPB_BASE + 0xe018)
 
+    .section .data
+    message: .byte 'Y'
+
+    .section .text
     /* SysTick handler */
     .thumb_func
     .global systick
@@ -61,11 +65,12 @@ systick:
     ldr r2, =(1 << 5)   /* TXFF */
 1:
     str r1, [r0]
-    tst r1, r2          /* Check transmit FIFO is empty */
+    tst r1, r2              /* Check transmit FIFO is empty */
     bne 1b
 
-    ldr r0, =UART0_UARTDR
-    mov r1, #'Y'        /* Send data */
+    ldr r0, =message
+    ldr r1, [r0]
+    ldr r0, =UART0_UARTDR   /* Send data */
     str r1, [r0]
 
     bx lr
@@ -181,7 +186,6 @@ main:
     ldr r1, =(1 << 25)
     str r1, [r0]
 
-    // bl configure_systick
     ldr r0, =SYST_CSR
     mov r1, #7              /* CLKSOURCE: processor clock,
                                TICKINT: assert the SysTick expecption request,

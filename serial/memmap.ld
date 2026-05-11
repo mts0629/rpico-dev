@@ -8,4 +8,8 @@ SECTIONS {
         *(.picobin_block)
         *(.text)
     } > FLASH
+
+    .data : {
+        *(.data)
+    } > FLASH
 }
