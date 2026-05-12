@@ -47,7 +47,7 @@
     .equ SYST_CVR, (PPB_BASE + 0xe018)
 
     .section .data
-    message: .byte 'Y'
+    message: .asciz "Hello\r\n"
 
     .section .text
     /* SysTick handler */
@@ -61,18 +61,25 @@ systick:
     str r1, [r0]
 
     /* UART data transmission */
-    ldr r0, =UART0_UARTFR
-    ldr r2, =(1 << 5)   /* TXFF */
-1:
-    str r1, [r0]
-    tst r1, r2              /* Check transmit FIFO is empty */
-    bne 1b
-
     ldr r0, =message
-    ldr r1, [r0]
-    ldr r0, =UART0_UARTDR   /* Send data */
-    str r1, [r0]
+1:
+    ldrb r1, [r0]
+    cmp r1, #0              /* Finish on '\0' */
+    beq 3f
 
+    ldr r2, =UART0_UARTFR
+    ldr r3, =(1 << 5)       /* TXFF */
+2:
+    str r4, [r2]
+    tst r3, r4              /* Check transmit FIFO is empty */
+    bne 2b
+
+    ldr r2, =UART0_UARTDR   /* Send data */
+    str r1, [r2]
+
+    add r0, r0, #1          /* Proceed address */
+    b 1b
+3:
     bx lr
 
     /* Polling a register (r0: register, r1: expected bit pattern) */
