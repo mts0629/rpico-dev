@@ -9,7 +9,7 @@ SECTIONS {
         *(.text)
     } > FLASH
 
-    .data : {
-        *(.data)
+    .rodata : {
+        *(.rodata)
     } > FLASH
 }
