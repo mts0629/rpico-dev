@@ -3,9 +3,15 @@ MEMORY {
 }
 
 SECTIONS {
+    .vectors ORIGIN(FLASH) : {
+        KEEP(*(.vectors))
+    } > FLASH
+
+    .picobin_block : {
+        KEEP(*(.picobin_block))
+    } > FLASH
+
     .text : {
-        *(.vectors)
-        *(.picobin_block)
         *(.text)
     } > FLASH
 }
