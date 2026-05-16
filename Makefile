@@ -1,15 +1,19 @@
 PREFIX = arm-none-eabi-
 MCPU = -mcpu=cortex-m33
 ASFLAGS = -mthumb
+TARGET = prog.elf
 
 BUILD ?= release
 ifeq ($(BUILD), debug)
 	ASFLAGS += -g
 endif
 
+SRCS = $(wildcard *.S)
+OBJS = $(SRCS:.S=.o)
+
 .PHONY: clean
 
-blink.elf: image_def.o main.o
+$(TARGET): $(OBJS)
 	$(PREFIX)ld -nostdlib -T memmap.ld $^ -o $@
 
 %.o: %.S
